@@ -56,10 +56,11 @@ async fn index() -> &'static str {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
-    let db = db::db().await?;
-    let state = state::AppState { db: Arc::new(db) };
-
     let port: u16 = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string()).parse()?;
+    let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| "secret".to_string());
+
+    let db = db::db().await?;
+    let state = state::AppState { db: Arc::new(db), jwt_secret };
 
     let (router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
         .routes(routes!(health_check))

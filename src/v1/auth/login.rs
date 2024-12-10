@@ -3,7 +3,11 @@ use argon2::{
     password_hash::{PasswordHash, PasswordVerifier},
     Argon2,
 };
+use hmac::{Hmac, Mac};
+use jwt::SignWithKey;
+use sha2::Sha256;
 use sqlx::query;
+use std::collections::BTreeMap;
 
 #[derive(Serialize, Deserialize, ToSchema)]
 pub struct LoginBody {
@@ -36,10 +40,14 @@ pub async fn login(
         return Err(AppError::Error(Errors::Unauthorized));
     }
 
-    // technically I should be using a JWT and returning it to the client
-    // since this will be a mobile app.
+    let key: Hmac<Sha256> =
+        Hmac::new_from_slice(state.jwt_secret.as_bytes()).context("Failed to create HMAC")?;
+    let mut claims = BTreeMap::new();
+    claims.insert("id", user.id.to_string());
+    claims.insert("username", user.username);
+    claims.insert("real_name", user.real_name);
+    claims.insert("email", user.email);
+    let token_str = claims.sign_with_key(&key).context("Failed to sign JWT")?;
 
-    // let jwt = ...
-
-    Ok(user.id.to_string())
+    Ok(token_str)
 }

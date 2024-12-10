@@ -6,6 +6,11 @@ use argon2::{
     Argon2,
 };
 
+use hmac::{Hmac, Mac};
+use jwt::SignWithKey;
+use sha2::Sha256;
+use std::collections::BTreeMap;
+
 #[derive(Serialize, Deserialize, ToSchema)]
 pub struct SignupBody {
     real_name: String,
@@ -40,5 +45,14 @@ pub async fn signup(
     .fetch_one(&*state.db)
     .await?;
 
-    Ok(user.id.to_string())
+    let key: Hmac<Sha256> =
+        Hmac::new_from_slice(state.jwt_secret.as_bytes()).context("Failed to create HMAC")?;
+    let mut claims = BTreeMap::new();
+    claims.insert("id", user.id.to_string());
+    claims.insert("username", user.username);
+    claims.insert("real_name", user.real_name);
+    claims.insert("email", user.email);
+    let token_str = claims.sign_with_key(&key).context("Failed to sign JWT")?;
+
+    Ok(token_str)
 }
