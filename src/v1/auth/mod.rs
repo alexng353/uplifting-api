@@ -1,13 +1,15 @@
-use crate::state::AppState;
+use crate::AppState;
 
 pub(super) use super::*;
 
 pub mod signup;
+pub mod login;
 
 pub const AUTH_TAG: &str = "auth";
 
 pub fn router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(signup::signup))
+        .routes(routes!(login::login))
         .with_state(state)
 }

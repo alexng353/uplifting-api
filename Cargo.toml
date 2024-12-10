@@ -23,3 +23,4 @@ sqlx = { version = "0.8.2", features = [
 uuid = "1.11.0"
 chrono = "0.4.39"
 dotenv = "0.15.0"
+argon2 = "0.5.3"
