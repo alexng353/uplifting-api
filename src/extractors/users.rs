@@ -1,19 +1,17 @@
-use std::sync::Arc;
-
 use crate::*;
-use anyhow::bail;
 use axum::{
     async_trait,
     extract::{FromRef, FromRequestParts},
     http::{header, request::Parts},
 };
 
-use chrono::{DateTime, Utc};
 use jwt::VerifyWithKey;
 use sqlx::types::Uuid;
 use util::auth::JWTClaims;
 
-pub struct UserId(Uuid);
+/// Remember, this is FromRequestParts, so it has to be ABOVE the extractors
+/// that eat the entire request
+pub struct UserId(pub Uuid);
 
 #[async_trait]
 impl<S> FromRequestParts<S> for UserId
@@ -38,6 +36,10 @@ where
         let claims: JWTClaims = jwt_string
             .verify_with_key(&state.jwt_key)
             .map_err(|_| AppError::Error(Errors::Unauthorized))?;
+
+        if claims.exp < chrono::Utc::now().timestamp() {
+            return Err(AppError::Error(Errors::JWTExpired));
+        }
 
         Ok(UserId(claims.sub))
     }

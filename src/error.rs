@@ -11,6 +11,7 @@ pub enum Errors {
     Ise(anyhow::Error),
     Unimplemented,
     Unauthorized,
+    JWTExpired,
 }
 
 pub enum AppError {
@@ -73,6 +74,12 @@ impl IntoResponse for AppError {
                 Errors::Unimplemented => {
                     (StatusCode::NOT_IMPLEMENTED, "Not implemented").into_response()
                 }
+
+                Errors::JWTExpired => (
+                    StatusCode::UNAUTHORIZED,
+                    "JWT has expired. Please log in again.",
+                )
+                    .into_response(),
             },
         }
     }

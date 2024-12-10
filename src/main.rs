@@ -72,6 +72,7 @@ async fn main() -> anyhow::Result<()> {
         .routes(routes!(index))
         .with_state(state.clone())
         .nest("/api/v1/auth", v1::auth::router(state.clone()))
+        .nest("/api/v1/exercises", v1::exercises::router(state.clone()))
         .split_for_parts();
 
     let router = router.merge(SwaggerUi::new("/docs").url("/docs/openapi.json", api));
