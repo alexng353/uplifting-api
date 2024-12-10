@@ -1,23 +1,30 @@
-use std::net::Ipv4Addr;
+use std::{net::Ipv4Addr, sync::Arc};
 use tokio::net::TcpListener;
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 use utoipa_swagger_ui::SwaggerUi;
 
+// tags
+use v1::auth::AUTH_TAG;
+
 mod v1;
+mod structs;
+mod state;
+mod db;
 
 #[derive(OpenApi)]
 #[openapi(
     tags(
+        (name = AUTH_TAG, description = "Authentication API endpoints"),
         // (name = CUSTOMER_TAG, description = "Customer API endpoints"),
         // (name = ORDER_TAG, description = "Order API endpoints")
-    )
+    ),
 )]
 struct ApiDoc;
 
 /// Get health of the API.
 #[utoipa::path(
-    method(get, head),
+    get,
     path = "/.well-known/health-check",
     responses(
         (status = OK, description = "Success", body = str, content_type = "text/plain")
@@ -27,22 +34,36 @@ async fn health_check() -> &'static str {
     "ok"
 }
 
+#[utoipa::path(
+    get, 
+    path = "/",
+    responses(
+        (status = OK, description = "Success", body = str, content_type = "text/plain")
+    )
+)]
+async fn index() -> &'static str {
+    "ok 200"
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    dotenv::dotenv().ok();
+    let db = db::db().await?;
+    let state = state::AppState { db: Arc::new(db) };
+
+    let port: u16 = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string()).parse()?;
+
     let (router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
         .routes(routes!(health_check))
-        // .nest("/api/customer", customer::router())
-        // .nest("/api/order", order::router())
-        // .routes(routes!(
-        //     inner::secret_handlers::get_secret,
-        //     inner::secret_handlers::post_secret
-        // ))
+        .routes(routes!(index))
+        .with_state(state.clone())
+        .nest("/api/v1/auth", v1::auth::router(state.clone()))
         .split_for_parts();
 
-    let router = router.merge(SwaggerUi::new("/swagger-ui").url("/apidoc/openapi.json", api));
+    let router = router.merge(SwaggerUi::new("/docs").url("/docs/openapi.json", api));
 
-    println!("Listening on http://localhost:8080");
-    let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, 8080)).await?;
+    println!("Listening on http://localhost:{port}");
+    let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, port)).await?;
     axum::serve(listener, router).await?;
 
     Ok(())
