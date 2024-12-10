@@ -1,4 +1,5 @@
 use std::{net::Ipv4Addr, sync::Arc};
+use hmac::{Hmac, Mac};
 use tokio::net::TcpListener;
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
@@ -12,6 +13,8 @@ mod structs;
 mod state;
 mod db;
 mod error;
+mod util;
+mod extractors;
 
 pub(crate) use anyhow::Context;
 pub(crate) use axum::extract::{Json, State};
@@ -60,7 +63,9 @@ async fn main() -> anyhow::Result<()> {
     let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| "secret".to_string());
 
     let db = db::db().await?;
-    let state = state::AppState { db: Arc::new(db), jwt_secret };
+    let state = state::AppState { db: Arc::new(db),
+    jwt_key: Hmac::new_from_slice(jwt_secret.as_bytes()).context("Failed to create HMAC")? 
+    };
 
     let (router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
         .routes(routes!(health_check))
