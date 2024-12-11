@@ -2,14 +2,12 @@ use crate::AppState;
 
 pub(super) use super::*;
 
-pub mod signup;
-pub mod login;
+pub mod create;
 
-pub const AUTH_TAG: &str = "auth";
+pub const MUSCLES_TAG: &str = "muscles";
 
 pub(super) fn router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
-        .routes(routes!(signup::signup))
-        .routes(routes!(login::login))
+        .routes(routes!(create::create))
         .with_state(state)
 }

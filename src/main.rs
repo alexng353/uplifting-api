@@ -6,7 +6,7 @@ use utoipa_axum::{router::OpenApiRouter, routes};
 use utoipa_swagger_ui::SwaggerUi;
 
 // tags
-use v1::auth::AUTH_TAG;
+use v1::{auth::AUTH_TAG, body_parts::BODY_PARTS_TAG, exercises::EXERCISES_TAG};
 
 mod v1;
 mod structs;
@@ -27,6 +27,8 @@ pub(crate) use utoipa::ToSchema;
 #[openapi(
     tags(
         (name = AUTH_TAG, description = "Authentication API endpoints"),
+        (name = EXERCISES_TAG, description = "Exercise API endpoints"),
+        (name = BODY_PARTS_TAG, description = "Body part API endpoints"),
         // (name = CUSTOMER_TAG, description = "Customer API endpoints"),
         // (name = ORDER_TAG, description = "Order API endpoints")
     ),
@@ -71,8 +73,7 @@ async fn main() -> anyhow::Result<()> {
         .routes(routes!(health_check))
         .routes(routes!(index))
         .with_state(state.clone())
-        .nest("/api/v1/auth", v1::auth::router(state.clone()))
-        .nest("/api/v1/exercises", v1::exercises::router(state.clone()))
+        .nest("/api/v1", v1::router(state.clone()))
         .split_for_parts();
 
     let router = router.merge(SwaggerUi::new("/docs").url("/docs/openapi.json", api));

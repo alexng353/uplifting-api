@@ -1,6 +1,6 @@
-use chrono::{DateTime, Utc};
+use chrono::NaiveDateTime;
 use extractors::users::UserId;
-use sqlx::{query, query_as};
+use sqlx::query;
 use structs::exercise_types::ExerciseType;
 use uuid::Uuid;
 
@@ -12,6 +12,9 @@ pub struct CreateExerciseBody {
     // todo: make this an enum
     exercise_type: ExerciseType,
     description: String,
+    body_parts: Vec<String>,
+    primary_muscles: Vec<String>,
+    secondary_muscles: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, sqlx::Type, PartialEq, sqlx::FromRow)]
@@ -22,7 +25,7 @@ pub struct Exercise {
     pub description: String,
     pub author_id: Uuid,
     pub official: bool,
-    pub created_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
 }
 
 #[utoipa::path(post, path = "/create", responses((status = OK, body = String)), tag = super::EXERCISES_TAG)]
@@ -36,24 +39,19 @@ pub async fn create(
         .await?
         .is_admin;
 
-    if !is_admin {
-        return Err(AppError::Error(Errors::Unauthorized));
-    }
-    // INSERT INTO users (id, created_at, updated_at, role) VALUES ($1, NOW(), NOW(), ($2::text)::user_role) RETURNING id, created_at, updated_at, role as "role:UserRole"
-    //
-    let insert = query_as!(
-        Exercise,
+    query!(
         r#"
-        INSERT INTO exercises (name, exercise_type, description, author_id, official)
-        VALUES ($1, ($2::text)::exercise_type, $3, $4, $5)
-        RETURNING id, name, exercise_type, description, author_id, official, created_at
+        INSERT INTO exercises (name, exercise_type, official, author_id, description)
+        VALUES ($1, $2, $3, $4, $5)
         "#,
         body.name,
-        body.exercise_type.to_string(),
-        body.description,
+        body.exercise_type as ExerciseType,
+        is_admin,
         user,
-        false
-    );
+        body.description
+    )
+    .fetch_one(&*state.db)
+    .await?;
 
     todo!()
 }
