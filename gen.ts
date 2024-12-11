@@ -16,8 +16,8 @@ const data: MuscleGroup[] = [
     major_group: "Upper Body",
     group_name: "Chest",
     muscles: [
-      { colloquial_name: "Pecs", scientific_name: "Pectoralis major" },
-      { colloquial_name: "Pec Minor", scientific_name: "Pectoralis minor" }
+      { colloquial_name: "Upper Pecs", scientific_name: "Clavicular Pectoralis Major" },
+      { colloquial_name: "Pecs", scientific_name: "Sternal Pectoralis Major" },
     ]
   },
   {
@@ -35,7 +35,9 @@ const data: MuscleGroup[] = [
     major_group: "Upper Body",
     group_name: "Shoulders",
     muscles: [
-      { colloquial_name: "Delts", scientific_name: "Deltoideus" },
+      { colloquial_name: "Front Delts", scientific_name: "Anterior deltoid" },
+      { colloquial_name: "Rear Delts", scientific_name: "Posterior deltoid" },
+      { colloquial_name: "Side Delts", scientific_name: "Lateral deltoid" },
       { colloquial_name: "Rotator Cuff", scientific_name: "Rotator cuff" }
     ]
   },

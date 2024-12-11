@@ -6,7 +6,9 @@ use crate::*;
 #[derive(Serialize, Deserialize, ToSchema)]
 pub struct CreateMuscleBody {
     name: String,
-    body_parts: Vec<String>,
+    scientific_name: String,
+    major_group: String,
+    minor_group: String,
 }
 
 #[utoipa::path(post, path = "/create", responses((status = OK, body = String)), tag = super::MUSCLES_TAG)]
@@ -25,8 +27,11 @@ pub async fn create(
     }
 
     let out = query!(
-        "INSERT INTO muscles (name) VALUES ($1) RETURNING id",
-        body.name
+        "INSERT INTO muscles (name, scientific_name, major_group, minor_group) VALUES ($1, $2, $3, $4) RETURNING id",
+        body.name,
+        body.scientific_name,
+        body.major_group,
+        body.minor_group,
     )
     .fetch_one(&*state.db)
     .await?;
