@@ -1,0 +1,53 @@
+{
+  "Upper Body": {
+    "Chest": {
+      "Pectoralis major": "Pecs",
+      "Pectoralis minor": "Pecs"
+    },
+    "Back": {
+      "Latissimus dorsi": "Lats",
+      "Trapezius": "Traps",
+      "Rhomboids": "Upper/mid-back muscles",
+      "Erector spinae": "Spinal erectors",
+      "Teres major": "Upper lats"
+    },
+    "Shoulders": {
+      "Deltoids": "Delts",
+      "Rotator cuff muscles": "Rotator cuff"
+    },
+    "Arms": {
+      "Biceps brachii": "Biceps",
+      "Brachialis": "Biceps’ under-muscle",
+      "Triceps brachii": "Triceps",
+      "Brachioradialis": "Forearm muscles",
+      "Forearm flexors/extensors": "Forearm muscles"
+    }
+  },
+  "Core": {
+    "Abdominals": {
+      "Rectus abdominis": "Abs",
+      "Transverse abdominis": "Deep core abs",
+      "External obliques": "Side abs",
+      "Internal obliques": "Inner side abs"
+    },
+    "Lower Back": {
+      "Quadratus lumborum": "QL/Lower back muscles",
+      "Erector spinae": "Spinal erectors"
+    }
+  },
+  "Lower Body": {
+    "Legs": {
+      "Quadriceps": "Quads",
+      "Hamstrings": "Quads",
+      "Gluteus maximus": "Glutes/Butt muscles",
+      "Gluteus medius": "Glutes/Butt muscles",
+      "Gluteus minimus": "Glutes/Butt muscles",
+      "Adductors": "Adductors",
+      "Abductors": "Adductors"
+    },
+    "Calves": {
+      "Gastrocnemius": "Calves",
+      "Soleus": "Calves"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "major_group": "Upper Body",
+    "group_name": "Chest",
+    "muscles": [
+      "Pectoralis major",
+      "Pectoralis minor"
+    ]
+  },
+  {
+    "major_group": "Upper Body",
+    "group_name": "Back",
+    "muscles": [
+      "Latissimus dorsi",
+      "Trapezius",
+      "Rhomboids",
+      "Erector spinae",
+      "Teres major"
+    ]
+  },
+  {
+    "major_group": "Upper Body",
+    "group_name": "Shoulders",
+    "muscles": [
+      "Deltoids",
+      "Rotator cuff muscles"
+    ]
+  },
+  {
+    "major_group": "Upper Body",
+    "group_name": "Arms",
+    "muscles": [
+      "Biceps brachii",
+      "Brachialis",
+      "Triceps brachii",
+      "Brachioradialis",
+      "Forearm flexors/extensors"
+    ]
+  },
+  {
+    "major_group": "Core",
+    "group_name": "Abdominals",
+    "muscles": [
+      "Rectus abdominis",
+      "Transverse abdominis",
+      "External obliques",
+      "Internal obliques"
+    ]
+  },
+  {
+    "major_group": "Core",
+    "group_name": "Lower Back",
+    "muscles": [
+      "Quadratus lumborum",
+      "Erector spinae"
+    ]
+  },
+  {
+    "major_group": "Lower Body",
+    "group_name": "Legs",
+    "muscles": [
+      "Quadriceps",
+      "Hamstrings",
+      "Gluteus maximus",
+      "Gluteus medius",
+      "Gluteus minimus",
+      "Adductors",
+      "Abductors"
+    ]
+  },
+  {
+    "major_group": "Lower Body",
+    "group_name": "Calves",
+    "muscles": [
+      "Gastrocnemius",
+      "Soleus"
+    ]
+  }
+]
