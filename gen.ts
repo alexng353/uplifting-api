@@ -47,6 +47,7 @@ const data: MuscleGroup[] = [
     muscles: [
       { colloquial_name: "Biceps", scientific_name: "Biceps brachii" },
       { colloquial_name: "Brachialis", scientific_name: "Brachialis" },
+      // TODO: add all 3 tricep heads, since you can easily bias them
       { colloquial_name: "Triceps", scientific_name: "Triceps brachii" },
       { colloquial_name: "Brachioradialis", scientific_name: "Brachioradialis" },
       { colloquial_name: "Forearm Flexors/Extensors", scientific_name: "Flexor and extensor muscles of the forearm" }
@@ -56,6 +57,7 @@ const data: MuscleGroup[] = [
     major_group: "Core",
     group_name: "Abdominals",
     muscles: [
+      // TODO: add upper and lower core muscles
       { colloquial_name: "Abs", scientific_name: "Rectus abdominis" },
       { colloquial_name: "Transverse Abs", scientific_name: "Transversus abdominis" },
       { colloquial_name: "External Obliques", scientific_name: "Obliquus externus abdominis" },

@@ -28,6 +28,12 @@ pub struct Exercise {
     pub created_at: NaiveDateTime,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Muscle {
+    pub id: Uuid,
+    pub is_primary: bool,
+}
+
 #[utoipa::path(post, path = "/create", responses((status = OK, body = String)), tag = super::EXERCISES_TAG)]
 pub async fn create(
     State(state): State<AppState>,
@@ -39,10 +45,37 @@ pub async fn create(
         .await?
         .is_admin;
 
-    query!(
+    let muscles: Vec<Muscle> = body
+        .primary_muscles
+        .iter()
+        .map(|id| -> anyhow::Result<Muscle> {
+            let uuid = Uuid::parse_str(id)?;
+            Ok(Muscle {
+                id: uuid,
+                is_primary: true,
+            })
+        })
+        .chain(
+            body.secondary_muscles
+                .iter()
+                .map(|id| -> anyhow::Result<Muscle> {
+                    let uuid = Uuid::parse_str(id)?;
+                    Ok(Muscle {
+                        id: uuid,
+                        is_primary: false,
+                    })
+                }),
+        )
+        .collect::<Result<Vec<Muscle>, _>>()
+        .context("Failed to parse muscle ids")?;
+
+    let mut tx = state.db.begin().await?;
+
+    let exercise = query!(
         r#"
         INSERT INTO exercises (name, exercise_type, official, author_id, description)
         VALUES ($1, $2, $3, $4, $5)
+        RETURNING id
         "#,
         body.name,
         body.exercise_type as ExerciseType,
@@ -50,8 +83,24 @@ pub async fn create(
         user,
         body.description
     )
-    .fetch_one(&*state.db)
+    .fetch_one(&mut *tx)
+    // .fetch_one(&*state.db)
     .await?;
 
-    todo!()
+    query!(
+        r#"
+        INSERT INTO exercise_muscle_relations (exercise_id, muscle_id, is_primary)
+        SELECT * FROM UNNEST($1::uuid[], $2::uuid[], $3::boolean[])
+        "#,
+        &vec![exercise.id; muscles.len()],
+        &muscles.iter().map(|m| m.id).collect::<Vec<Uuid>>(),
+        &muscles.iter().map(|m| m.is_primary).collect::<Vec<bool>>()
+    )
+    .execute(&mut *tx)
+    // .execute(&*state.db)
+    .await?;
+
+    tx.commit().await?;
+
+    Ok(exercise.id.to_string())
 }

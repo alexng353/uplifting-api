@@ -1,16 +1,11 @@
-use std::sync::Arc;
-
 use crate::*;
-use anyhow::bail;
 use axum::{
     async_trait,
     extract::{FromRef, FromRequestParts},
     http::{header, request::Parts},
 };
 
-use chrono::{DateTime, Utc};
 use jwt::VerifyWithKey;
-use sqlx::types::Uuid;
 use util::auth::JWTClaims;
 
 pub struct JWT(JWTClaims);
