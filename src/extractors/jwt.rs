@@ -1,6 +1,5 @@
 use crate::*;
 use axum::{
-    async_trait,
     extract::{FromRef, FromRequestParts},
     http::{header, request::Parts},
 };
@@ -10,7 +9,6 @@ use util::auth::JWTClaims;
 
 pub struct JWT(JWTClaims);
 
-#[async_trait]
 impl<S> FromRequestParts<S> for JWT
 where
     AppState: FromRef<S>,

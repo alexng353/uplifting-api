@@ -1,6 +1,5 @@
 use crate::*;
 use axum::{
-    async_trait,
     extract::{FromRef, FromRequestParts},
     http::{header, request::Parts},
 };
@@ -13,7 +12,6 @@ use util::auth::JWTClaims;
 /// that eat the entire request
 pub struct UserId(pub Uuid);
 
-#[async_trait]
 impl<S> FromRequestParts<S> for UserId
 where
     AppState: FromRef<S>,
