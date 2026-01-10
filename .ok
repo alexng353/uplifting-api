@@ -1,3 +1,0 @@
-db.start: docker compose up -d
-db.stop: docker compose down
-db.reset: docker compose down -v --remove-orphans
