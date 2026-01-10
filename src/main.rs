@@ -1,6 +1,8 @@
 use std::{net::Ipv4Addr, sync::Arc};
+use axum::http::Method;
 use hmac::{Hmac, Mac};
 use tokio::net::TcpListener;
+use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 use utoipa_swagger_ui::SwaggerUi;
@@ -69,11 +71,17 @@ async fn main() -> anyhow::Result<()> {
     jwt_key: Hmac::new_from_slice(jwt_secret.as_bytes()).context("Failed to create HMAC")? 
     };
 
+    let cors = CorsLayer::new()
+        .allow_methods(Any)
+        .allow_origin(["http://localhost:5173".parse().unwrap()])
+        .allow_headers(Any);
+
     let (router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
         .routes(routes!(health_check))
         .routes(routes!(index))
         .with_state(state.clone())
         .nest("/api/v1", v1::router(state.clone()))
+        .layer(cors)
         .split_for_parts();
 
     tokio::fs::write("openapi.json", api.to_json()?).await?;

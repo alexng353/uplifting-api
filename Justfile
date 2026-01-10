@@ -10,3 +10,6 @@ build:
 
 run:
     cargo run
+
+dev:
+    cargo watch -x run -i "openapi.json"
