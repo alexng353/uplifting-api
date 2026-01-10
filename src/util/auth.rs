@@ -18,14 +18,7 @@ impl JWTClaims {
     pub fn new(sub: Uuid, username: String, real_name: String, email: String) -> Self {
         let iat = Utc::now().timestamp();
         let exp = iat + 60 * 60 * 24 * 7;
-        Self {
-            sub,
-            iat,
-            exp,
-            username,
-            real_name,
-            email,
-        }
+        Self::new_with_exp(sub, username, real_name, email, exp)
     }
 
     /// Create a new JWT Claims with a custom expiration time. Expiration time is added to current time.

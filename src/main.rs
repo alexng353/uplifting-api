@@ -1,5 +1,4 @@
 use std::{net::Ipv4Addr, sync::Arc};
-use axum::http::Method;
 use hmac::{Hmac, Mac};
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
@@ -20,7 +19,7 @@ mod extractors;
 
 pub(crate) use anyhow::Context;
 pub(crate) use axum::extract::{Json, State};
-pub(crate) use error::{AnyhowError, AppError, Errors};
+pub(crate) use error::{AppError, Errors};
 pub(crate) use serde::{Deserialize, Serialize};
 pub(crate) use state::AppState;
 pub(crate) use utoipa::ToSchema;
