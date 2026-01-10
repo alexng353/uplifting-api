@@ -76,6 +76,8 @@ async fn main() -> anyhow::Result<()> {
         .nest("/api/v1", v1::router(state.clone()))
         .split_for_parts();
 
+    tokio::fs::write("openapi.json", api.to_json()?).await?;
+
     let router = router.merge(SwaggerUi::new("/docs").url("/docs/openapi.json", api));
 
     println!("Listening on http://localhost:{port}");

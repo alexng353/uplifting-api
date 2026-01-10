@@ -1,6 +1,6 @@
 mod db
 _default:
-    just --list api
+    just --list
 
 migrate:
     sqlx migrate run
