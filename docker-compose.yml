@@ -2,7 +2,7 @@ name: uplifting-api
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres-uplifting-api
+    container_name: postgres
     ports:
       - "5401:5432"
     environment:
@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - ~/databases/uplifting-api-postgres-data:/var/lib/postgresql
+      - pg-data:/var/lib/postgresql
 
 volumes:
-  postgres-data:
+  pg-data:
