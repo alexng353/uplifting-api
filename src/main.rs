@@ -84,7 +84,7 @@ async fn main() -> anyhow::Result<()> {
         .layer(cors)
         .split_for_parts();
 
-    tokio::fs::write("openapi.json", api.to_json()?).await?;
+    tokio::fs::write("openapi.json", api.to_pretty_json()?).await?;
 
     let router = router.merge(SwaggerUi::new("/docs").url("/docs/openapi.json", api));
 
