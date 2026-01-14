@@ -1,4 +1,5 @@
 pub mod exercise_types;
+pub mod exercises;
 pub mod friends;
 pub mod profiles;
 pub mod sets;
