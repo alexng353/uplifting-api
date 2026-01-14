@@ -1,0 +1,62 @@
+use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
+use utoipa::ToSchema;
+use uuid::Uuid;
+
+use super::sets::UserSet;
+
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct Workout {
+    pub id: Uuid,
+    pub user_id: Uuid,
+    pub name: Option<String>,
+    pub start_time: DateTime<Utc>,
+    pub end_time: Option<DateTime<Utc>>,
+    pub privacy: String,
+    pub gym_location: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct WorkoutWithSets {
+    #[serde(flatten)]
+    pub workout: Workout,
+    pub sets: Vec<UserSet>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct WorkoutSummary {
+    pub id: Uuid,
+    pub name: Option<String>,
+    pub start_time: DateTime<Utc>,
+    pub end_time: Option<DateTime<Utc>>,
+    pub duration_minutes: i64,
+    pub total_volume: Decimal,
+    pub total_sets: i64,
+    pub total_reps: i64,
+    pub exercises_count: i64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct CreateWorkoutBody {
+    pub name: Option<String>,
+    pub privacy: Option<String>,
+    pub gym_location: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct UpdateWorkoutBody {
+    pub name: Option<String>,
+    pub privacy: Option<String>,
+    pub gym_location: Option<String>,
+    pub end_time: Option<DateTime<Utc>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct WorkoutListResponse {
+    pub workouts: Vec<Workout>,
+    pub total: i64,
+    pub page: i64,
+    pub per_page: i64,
+}
