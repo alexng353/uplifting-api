@@ -5,6 +5,7 @@ use crate::AppState;
 
 pub mod auth;
 pub mod exercises;
+pub mod friends;
 pub mod muscles;
 pub mod sets;
 pub mod workouts;
@@ -17,4 +18,5 @@ pub fn router(state: AppState) -> OpenApiRouter {
         .nest("/muscles", muscles::router(state.clone()))
         .nest("/workouts", workouts::router(state.clone()))
         .nest("/sets", sets::router(state.clone()))
+        .nest("/friends", friends::router(state.clone()))
 }
