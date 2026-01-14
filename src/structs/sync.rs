@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::NaiveDateTime;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -10,8 +10,8 @@ use super::sets::PreviousSetData;
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct SyncWorkoutRequest {
     pub name: Option<String>,
-    pub start_time: DateTime<Utc>,
-    pub end_time: DateTime<Utc>,
+    pub start_time: NaiveDateTime,
+    pub end_time: NaiveDateTime,
     pub privacy: String,
     pub gym_location: Option<String>,
     pub exercises: Vec<SyncExercise>,
@@ -29,7 +29,7 @@ pub struct SyncSet {
     pub reps: i32,
     pub weight: Decimal,
     pub weight_unit: String,
-    pub created_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
 }
 
 /// Response after syncing a workout

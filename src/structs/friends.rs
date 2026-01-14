@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use utoipa::ToSchema;
@@ -41,7 +41,7 @@ pub struct Friendship {
     pub user_id: Uuid,
     pub friend_id: Uuid,
     pub status: String,
-    pub created_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -52,7 +52,7 @@ pub struct FriendWithProfile {
     pub real_name: String,
     pub avatar_url: Option<String>,
     pub status: String,
-    pub created_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -74,8 +74,8 @@ pub struct FeedItem {
     pub real_name: String,
     pub avatar_url: Option<String>,
     pub workout_name: Option<String>,
-    pub start_time: DateTime<Utc>,
-    pub end_time: Option<DateTime<Utc>>,
+    pub start_time: NaiveDateTime,
+    pub end_time: Option<NaiveDateTime>,
     pub duration_minutes: Option<i64>,
     pub total_volume: Option<rust_decimal::Decimal>,
     pub total_sets: Option<i64>,
