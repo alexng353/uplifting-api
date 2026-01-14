@@ -8,6 +8,7 @@ pub mod exercises;
 pub mod friends;
 pub mod muscles;
 pub mod sets;
+pub mod sync;
 pub mod users;
 pub mod workouts;
 
@@ -21,4 +22,5 @@ pub fn router(state: AppState) -> OpenApiRouter {
         .nest("/sets", sets::router(state.clone()))
         .nest("/friends", friends::router(state.clone()))
         .nest("/users", users::router(state.clone()))
+        .nest("/sync", sync::router(state.clone()))
 }
