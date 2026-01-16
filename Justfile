@@ -1,4 +1,5 @@
 mod db
+mod docker
 _default:
     just --list
 

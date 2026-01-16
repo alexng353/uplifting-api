@@ -11,17 +11,17 @@ RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release
 RUN rm -rf src
 
-# Copy the actual source code
+# Copy the actual source code and SQLx cache
 COPY src ./src
 COPY migrations ./migrations
+COPY .sqlx ./.sqlx
 
 # Touch main.rs to invalidate the dummy build
 RUN touch src/main.rs
 
 # Build with SQLx offline mode (requires .sqlx directory with query metadata)
 # Run `cargo sqlx prepare` locally before building the Docker image
-ENV SQLX_OFFLINE=true
-RUN cargo build --release
+RUN SQLX_OFFLINE=true cargo build --release
 
 # Runtime stage
 FROM debian:bookworm-slim

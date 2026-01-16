@@ -10,4 +10,3 @@ data/
 data2/
 gen.ts
 openapi.json
-.sqlx/
