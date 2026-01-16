@@ -5,6 +5,10 @@ _default:
 migrate:
     sqlx migrate run
 
+# Generate sqlx offline query data for building without a live database
+prepare:
+    cargo sqlx prepare
+
 build:
     cargo build --release
 

@@ -1,0 +1,36 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT reps, weight, weight_unit\n            FROM user_sets\n            WHERE user_id = $1 AND exercise_id = $2 AND workout_id = $3\n            ORDER BY created_at ASC\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "reps",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "weight",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 2,
+        "name": "weight_unit",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "3a1b7dda4878e454f63e3fb91bb1a05a6a9bbab6a38f3743dc623c709f96d97b"
+}

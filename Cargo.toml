@@ -28,6 +28,7 @@ sqlx = { version = "0.8.3", features = [
   "macros",
   "uuid",
   "rust_decimal",
+  "migrate",
 ] }
 rust_decimal = { version = "1", features = ["serde"] }
 uuid = { version = "1.13.1", features = ["serde", "v4"] }
