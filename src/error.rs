@@ -58,7 +58,7 @@ impl IntoResponse for AppError {
             AppError::Error(e) => match e {
                 Errors::TooBig(size_limit) => (
                     StatusCode::BAD_REQUEST,
-                    format!("Value cannot be greater than {} bytes", size_limit),
+                    format!("Value cannot be greater than {size_limit} bytes"),
                 )
                     .into_response(),
 

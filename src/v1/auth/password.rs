@@ -63,10 +63,7 @@ pub async fn request_password_change(
         &state.mailgun,
         &user.email,
         "Password Change Verification Code",
-        &format!(
-            "Your verification code is: {}\n\nThis code will expire in 15 minutes.",
-            code
-        ),
+        &format!("Your verification code is: {code}\n\nThis code will expire in 15 minutes."),
     )
     .await
     .context("Failed to send verification email")?;

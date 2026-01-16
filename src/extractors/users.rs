@@ -1,11 +1,11 @@
-use crate::{structs::users::UserProfile, *};
+use crate::*;
 use axum::{
     extract::{FromRef, FromRequestParts},
     http::{header, request::Parts},
 };
 
 use jwt::VerifyWithKey;
-use sqlx::{query, query_as, types::Uuid};
+use sqlx::{query, types::Uuid};
 use util::auth::JWTClaims;
 
 /// Remember, this is FromRequestParts, so it has to be ABOVE the extractors

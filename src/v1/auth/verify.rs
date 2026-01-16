@@ -58,10 +58,7 @@ pub async fn send_verification(
         &state.mailgun,
         &user.email,
         "Verify Your Email Address",
-        &format!(
-            "Your verification code is: {}\n\nThis code will expire in 30 minutes.",
-            code
-        ),
+        &format!("Your verification code is: {code}\n\nThis code will expire in 30 minutes."),
     )
     .await
     .context("Failed to send verification email")?;

@@ -31,9 +31,9 @@ pub async fn login(
     let argon2 = Argon2::default();
     let hash = PasswordHash::new(&user.password_hash).expect("Password hashing failed");
 
-    if !argon2
+    if argon2
         .verify_password(body.password.as_bytes(), &hash)
-        .is_ok()
+        .is_err()
     {
         return Err(AppError::Error(Errors::Unauthorized));
     }

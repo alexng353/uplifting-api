@@ -1,7 +1,7 @@
 use sqlx::query_as;
 
 use crate::extractors::users::UserId;
-use crate::structs::workouts::{CreateWorkoutBody, Workout, WorkoutKind};
+use crate::structs::workouts::{CreateWorkoutBody, Workout};
 use crate::*;
 
 /// Create a new workout
