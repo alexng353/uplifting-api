@@ -44,6 +44,33 @@
         }
       }
     },
+    "/api/v1/auth/change-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Change password with verification code",
+        "operationId": "change_password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed successfully"
+          },
+          "401": {
+            "description": "Invalid or expired code"
+          }
+        }
+      }
+    },
     "/api/v1/auth/login": {
       "post": {
         "tags": [
@@ -75,6 +102,40 @@
         }
       }
     },
+    "/api/v1/auth/request-password-change": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Request a password change verification code",
+        "operationId": "request_password_change",
+        "responses": {
+          "200": {
+            "description": "Verification code sent to email"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/send-verification": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Send email verification code",
+        "operationId": "send_verification",
+        "responses": {
+          "200": {
+            "description": "Verification code sent to email"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        }
+      }
+    },
     "/api/v1/auth/signup": {
       "post": {
         "tags": [
@@ -102,6 +163,33 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/verify-email": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Verify email with code",
+        "operationId": "verify_email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Email verified successfully"
+          },
+          "401": {
+            "description": "Invalid or expired code"
           }
         }
       }
@@ -1281,6 +1369,21 @@
   },
   "components": {
     "schemas": {
+      "ChangePasswordBody": {
+        "type": "object",
+        "required": [
+          "code",
+          "new_password"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "new_password": {
+            "type": "string"
+          }
+        }
+      },
       "CreateExerciseBody": {
         "type": "object",
         "required": [
@@ -2005,6 +2108,12 @@
               "string",
               "null"
             ]
+          },
+          "username": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
         }
       },
@@ -2106,6 +2215,7 @@
           "username",
           "real_name",
           "email",
+          "email_verified",
           "created_at"
         ],
         "properties": {
@@ -2121,6 +2231,9 @@
           },
           "email": {
             "type": "string"
+          },
+          "email_verified": {
+            "type": "boolean"
           },
           "id": {
             "type": "string",
@@ -2245,6 +2358,17 @@
           "user_id": {
             "type": "string",
             "format": "uuid"
+          }
+        }
+      },
+      "VerifyEmailBody": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
           }
         }
       },

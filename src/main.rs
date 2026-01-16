@@ -112,8 +112,46 @@ async fn index() -> &'static str {
     "ok 200"
 }
 
+/// Generate OpenAPI spec without starting the server or connecting to database
+fn generate_spec_only() -> anyhow::Result<()> {
+    // Create a dummy state for router construction (won't be used at runtime)
+    let dummy_state = state::AppState {
+        db: Arc::new(
+            sqlx::pool::PoolOptions::new()
+                .max_connections(1)
+                .connect_lazy("postgres://localhost/dummy")
+                .expect("Failed to create dummy pool"),
+        ),
+        jwt_key: Hmac::new_from_slice(b"dummy").expect("Failed to create dummy HMAC"),
+        mailgun: MailgunConfig {
+            api_key: String::new(),
+            domain: String::new(),
+            base_url: String::new(),
+            from_email: String::new(),
+        },
+    };
+
+    let (_, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
+        .routes(routes!(health_check))
+        .routes(routes!(index))
+        .with_state(dummy_state.clone())
+        .nest("/api/v1", v1::router(dummy_state))
+        .split_for_parts();
+
+    std::fs::write("openapi.json", api.to_pretty_json()?)?;
+    println!("Generated openapi.json");
+
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    // Check for --generate-spec flag
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|arg| arg == "--generate-spec") {
+        return generate_spec_only();
+    }
+
     dotenv::dotenv().ok();
 
     // Initialize tracing
