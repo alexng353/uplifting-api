@@ -79,6 +79,7 @@ async fn main() -> anyhow::Result<()> {
 
     let port: u16 = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string()).parse()?;
     let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| "secret".to_string());
+    let mobile_frontend_url = std::env::var("MOBILE_FRONTEND_URL").unwrap_or_else(|_| "http://localhost:5173".to_string());
 
     let db = db::db().await?;
     let state = state::AppState { db: Arc::new(db),
@@ -87,7 +88,7 @@ async fn main() -> anyhow::Result<()> {
 
     let cors = CorsLayer::new()
         .allow_methods(Any)
-        .allow_origin(["http://localhost:5173".parse().unwrap()])
+        .allow_origin([mobile_frontend_url.parse().context("Invalid MOBILE_FRONTEND_URL")?])
         .allow_headers(Any);
 
     let trace = TraceLayer::new_for_http()
