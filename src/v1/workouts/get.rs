@@ -27,12 +27,9 @@ pub async fn get_workout(
     Path(workout_id): Path<Uuid>,
 ) -> Result<Json<WorkoutWithSets>, AppError> {
     // Check ownership
-    let owner_id = query_scalar!(
-        "SELECT user_id FROM workouts WHERE id = $1",
-        workout_id
-    )
-    .fetch_optional(&*state.db)
-    .await?;
+    let owner_id = query_scalar!("SELECT user_id FROM workouts WHERE id = $1", workout_id)
+        .fetch_optional(&*state.db)
+        .await?;
 
     match owner_id {
         None => return Err(AppError::Error(Errors::Unauthorized)),

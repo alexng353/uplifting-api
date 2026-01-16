@@ -20,4 +20,3 @@ pub async fn get_all(State(state): State<AppState>) -> Result<Json<Vec<Muscle>>,
 
     Ok(Json(muscles))
 }
-

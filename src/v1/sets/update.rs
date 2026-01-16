@@ -28,12 +28,9 @@ pub async fn update_set(
     Json(body): Json<UpdateSetBody>,
 ) -> Result<Json<UserSet>, AppError> {
     // Check set ownership
-    let owner_id = query_scalar!(
-        "SELECT user_id FROM user_sets WHERE id = $1",
-        set_id
-    )
-    .fetch_optional(&*state.db)
-    .await?;
+    let owner_id = query_scalar!("SELECT user_id FROM user_sets WHERE id = $1", set_id)
+        .fetch_optional(&*state.db)
+        .await?;
 
     match owner_id {
         None => return Err(AppError::Error(Errors::Unauthorized)),

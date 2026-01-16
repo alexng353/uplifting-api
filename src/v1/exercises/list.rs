@@ -3,8 +3,8 @@ use serde::Deserialize;
 use sqlx::query_as;
 
 use crate::extractors::users::UserId;
-use crate::structs::exercises::{Exercise, ExerciseListResponse};
 use crate::structs::exercise_types::ExerciseType;
+use crate::structs::exercises::{Exercise, ExerciseListResponse};
 use crate::*;
 
 #[derive(Debug, Deserialize, ToSchema)]

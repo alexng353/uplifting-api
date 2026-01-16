@@ -58,13 +58,10 @@ pub async fn list_workouts(
     .fetch_all(&*state.db)
     .await?;
 
-    let total = sqlx::query_scalar!(
-        "SELECT COUNT(*) FROM workouts WHERE user_id = $1",
-        user_id
-    )
-    .fetch_one(&*state.db)
-    .await?
-    .unwrap_or(0);
+    let total = sqlx::query_scalar!("SELECT COUNT(*) FROM workouts WHERE user_id = $1", user_id)
+        .fetch_one(&*state.db)
+        .await?
+        .unwrap_or(0);
 
     Ok(Json(WorkoutListResponse {
         workouts,

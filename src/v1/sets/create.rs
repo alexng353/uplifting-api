@@ -28,12 +28,9 @@ pub async fn create_set(
     Json(body): Json<CreateSetBody>,
 ) -> Result<Json<UserSet>, AppError> {
     // Check workout ownership
-    let owner_id = query_scalar!(
-        "SELECT user_id FROM workouts WHERE id = $1",
-        workout_id
-    )
-    .fetch_optional(&*state.db)
-    .await?;
+    let owner_id = query_scalar!("SELECT user_id FROM workouts WHERE id = $1", workout_id)
+        .fetch_optional(&*state.db)
+        .await?;
 
     match owner_id {
         None => return Err(AppError::Error(Errors::Unauthorized)),

@@ -3,8 +3,8 @@ use sqlx::query_as;
 use uuid::Uuid;
 
 use crate::extractors::users::UserId;
-use crate::structs::exercises::{Exercise, ExerciseWithDetails, PersonalRecord};
 use crate::structs::exercise_types::ExerciseType;
+use crate::structs::exercises::{Exercise, ExerciseWithDetails, PersonalRecord};
 use crate::*;
 
 /// Get exercise details with user's personal record
