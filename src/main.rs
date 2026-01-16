@@ -112,10 +112,9 @@ async fn index() -> &'static str {
     "ok 200"
 }
 
-/// Generate OpenAPI spec without starting the server or connecting to database
-fn generate_spec_only() -> anyhow::Result<()> {
-    // Create a dummy state for router construction (won't be used at runtime)
-    let dummy_state = state::AppState {
+/// Create a dummy state for spec generation (won't be used at runtime)
+fn dummy_state() -> AppState {
+    state::AppState {
         db: Arc::new(
             sqlx::pool::PoolOptions::new()
                 .max_connections(1)
@@ -129,18 +128,24 @@ fn generate_spec_only() -> anyhow::Result<()> {
             base_url: String::new(),
             from_email: String::new(),
         },
-    };
+    }
+}
 
-    let (_, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
+/// Build the API router with OpenAPI spec
+fn build_router(state: AppState) -> (axum::Router, utoipa::openapi::OpenApi) {
+    OpenApiRouter::with_openapi(ApiDoc::openapi())
         .routes(routes!(health_check))
         .routes(routes!(index))
-        .with_state(dummy_state.clone())
-        .nest("/api/v1", v1::router(dummy_state))
-        .split_for_parts();
+        .with_state(state.clone())
+        .nest("/api/v1", v1::router(state))
+        .split_for_parts()
+}
 
+/// Generate OpenAPI spec without starting the server or connecting to database
+fn generate_spec_only() -> anyhow::Result<()> {
+    let (_, api) = build_router(dummy_state());
     std::fs::write("openapi.json", api.to_pretty_json()?)?;
     println!("Generated openapi.json");
-
     Ok(())
 }
 
@@ -205,14 +210,8 @@ async fn main() -> anyhow::Result<()> {
             },
         );
 
-    let (router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
-        .routes(routes!(health_check))
-        .routes(routes!(index))
-        .with_state(state.clone())
-        .nest("/api/v1", v1::router(state.clone()))
-        .layer(cors)
-        .layer(trace)
-        .split_for_parts();
+    let (router, api) = build_router(state);
+    let router = router.layer(cors).layer(trace);
 
     tokio::fs::write("openapi.json", api.to_pretty_json()?).await?;
 
