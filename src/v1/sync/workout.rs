@@ -22,20 +22,22 @@ pub async fn sync_workout(
     Json(body): Json<SyncWorkoutRequest>,
 ) -> Result<Json<SyncWorkoutResponse>, AppError> {
     let mut tx = state.db.begin().await?;
+    let kind: String = body.kind.clone().into();
 
     // Create the workout
     let workout = sqlx::query!(
         r#"
-        INSERT INTO workouts (user_id, name, start_time, end_time, privacy, gym_location)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO workouts (user_id, name, start_time, end_time, privacy, gym_location, kind)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING id
         "#,
         user_id,
         body.name,
-        body.start_time,
-        body.end_time,
+        *body.start_time,
+        *body.end_time,
         body.privacy,
-        body.gym_location
+        body.gym_location,
+        kind
     )
     .fetch_one(&mut *tx)
     .await?;
@@ -55,7 +57,7 @@ pub async fn sync_workout(
                 set.reps,
                 set.weight,
                 set.weight_unit,
-                set.created_at
+                *set.created_at
             )
             .execute(&mut *tx)
             .await?;

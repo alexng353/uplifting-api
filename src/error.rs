@@ -3,6 +3,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use std::str::Utf8Error;
+use tracing::error;
 
 #[allow(dead_code)]
 pub enum Errors {
@@ -61,12 +62,14 @@ impl IntoResponse for AppError {
                 )
                     .into_response(),
 
-                Errors::SqlxError(_) => {
-                    (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong").into_response()
+                Errors::SqlxError(e) => {
+                    error!(error = %e, error_debug = ?e, "Database error");
+                    (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error").into_response()
                 }
 
                 Errors::Ise(e) => {
-                    (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
+                    log_anyhow_error(&e);
+                    (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error").into_response()
                 }
 
                 Errors::Unauthorized => (StatusCode::UNAUTHORIZED, "Unauthorized").into_response(),
@@ -88,14 +91,24 @@ impl IntoResponse for AppError {
 // Make our own error that wraps `anyhow::Error`.
 pub struct AnyhowError(anyhow::Error);
 
+fn log_anyhow_error(e: &anyhow::Error) {
+    error!(
+        error = %e,
+        error_debug = ?e,
+        "Internal server error"
+    );
+
+    // Log the full error chain
+    for (i, cause) in e.chain().enumerate() {
+        error!(cause_index = i, cause = %cause, "Error chain");
+    }
+}
+
 // Tell axum how to convert `AppError` into a response.
 impl IntoResponse for AnyhowError {
     fn into_response(self) -> Response {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong: {}", self.0),
-        )
-            .into_response()
+        log_anyhow_error(&self.0);
+        (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error").into_response()
     }
 }
 

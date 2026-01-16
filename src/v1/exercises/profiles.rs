@@ -6,6 +6,36 @@ use crate::extractors::users::UserId;
 use crate::structs::profiles::{CreateProfileBody, ExerciseProfile};
 use crate::*;
 
+/// Get all profiles for the current user
+#[utoipa::path(
+    get,
+    path = "/profiles",
+    responses(
+        (status = OK, body = Vec<ExerciseProfile>),
+        (status = UNAUTHORIZED, description = "Not authenticated")
+    ),
+    tag = super::EXERCISES_TAG
+)]
+pub async fn get_all_profiles(
+    State(state): State<AppState>,
+    UserId(user_id): UserId,
+) -> Result<Json<Vec<ExerciseProfile>>, AppError> {
+    let profiles = query_as!(
+        ExerciseProfile,
+        r#"
+        SELECT id, user_id, exercise_id, name, created_at
+        FROM exercise_profiles
+        WHERE user_id = $1
+        ORDER BY exercise_id, name ASC
+        "#,
+        user_id
+    )
+    .fetch_all(&*state.db)
+    .await?;
+
+    Ok(Json(profiles))
+}
+
 /// Get user's profiles for an exercise
 #[utoipa::path(
     get,

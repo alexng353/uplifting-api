@@ -45,7 +45,7 @@ pub async fn list_workouts(
     let workouts = query_as!(
         Workout,
         r#"
-        SELECT id, user_id, name, start_time, end_time, privacy, gym_location
+        SELECT id, user_id, name, start_time, end_time, privacy, gym_location, kind
         FROM workouts
         WHERE user_id = $1
         ORDER BY start_time DESC

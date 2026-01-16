@@ -4,6 +4,30 @@ use uuid::Uuid;
 use crate::extractors::users::UserId;
 use crate::*;
 
+/// Get all favourite exercise IDs
+#[utoipa::path(
+    get,
+    path = "/favourites",
+    responses(
+        (status = OK, body = Vec<Uuid>, description = "List of favourite exercise IDs"),
+        (status = UNAUTHORIZED, description = "Not authenticated")
+    ),
+    tag = super::EXERCISES_TAG
+)]
+pub async fn list_favourites(
+    State(state): State<AppState>,
+    UserId(user_id): UserId,
+) -> Result<Json<Vec<Uuid>>, AppError> {
+    let favourites = sqlx::query_scalar!(
+        "SELECT exercise_id FROM favourite_exercises WHERE user_id = $1",
+        user_id
+    )
+    .fetch_all(&*state.db)
+    .await?;
+
+    Ok(Json(favourites))
+}
+
 /// Add exercise to favourites
 #[utoipa::path(
     post,

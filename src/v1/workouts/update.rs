@@ -51,7 +51,7 @@ pub async fn update_workout(
             gym_location = COALESCE($4, gym_location),
             end_time = COALESCE($5, end_time)
         WHERE id = $1
-        RETURNING id, user_id, name, start_time, end_time, privacy, gym_location
+        RETURNING id, user_id, name, start_time, end_time, privacy, gym_location, kind
         "#,
         workout_id,
         body.name,

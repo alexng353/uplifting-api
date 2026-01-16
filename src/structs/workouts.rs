@@ -7,6 +7,33 @@ use uuid::Uuid;
 
 use super::sets::UserSet;
 
+/// The kind of workout entry
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema, Default, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum WorkoutKind {
+    #[default]
+    Workout,
+    Rest,
+}
+
+impl From<String> for WorkoutKind {
+    fn from(s: String) -> Self {
+        match s.as_str() {
+            "rest" => WorkoutKind::Rest,
+            _ => WorkoutKind::Workout,
+        }
+    }
+}
+
+impl From<WorkoutKind> for String {
+    fn from(kind: WorkoutKind) -> Self {
+        match kind {
+            WorkoutKind::Workout => "workout".to_string(),
+            WorkoutKind::Rest => "rest".to_string(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct Workout {
     pub id: Uuid,
@@ -16,6 +43,8 @@ pub struct Workout {
     pub end_time: Option<NaiveDateTime>,
     pub privacy: String,
     pub gym_location: Option<String>,
+    #[sqlx(try_from = "String")]
+    pub kind: WorkoutKind,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -43,6 +72,8 @@ pub struct CreateWorkoutBody {
     pub name: Option<String>,
     pub privacy: Option<String>,
     pub gym_location: Option<String>,
+    #[serde(default)]
+    pub kind: WorkoutKind,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]

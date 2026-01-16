@@ -1,20 +1,23 @@
-use chrono::NaiveDateTime;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use uuid::Uuid;
 
+use super::serde_utils::JSDate;
 use super::sets::PreviousSetData;
+use super::workouts::WorkoutKind;
 
 /// Request to sync a completed workout from offline storage
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct SyncWorkoutRequest {
     pub name: Option<String>,
-    pub start_time: NaiveDateTime,
-    pub end_time: NaiveDateTime,
+    pub start_time: JSDate,
+    pub end_time: JSDate,
     pub privacy: String,
     pub gym_location: Option<String>,
     pub exercises: Vec<SyncExercise>,
+    #[serde(default)]
+    pub kind: WorkoutKind,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -29,7 +32,7 @@ pub struct SyncSet {
     pub reps: i32,
     pub weight: Decimal,
     pub weight_unit: String,
-    pub created_at: NaiveDateTime,
+    pub created_at: JSDate,
 }
 
 /// Response after syncing a workout

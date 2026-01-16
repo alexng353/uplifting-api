@@ -43,7 +43,7 @@ pub async fn get_workout(
     let workout = query_as!(
         Workout,
         r#"
-        SELECT id, user_id, name, start_time, end_time, privacy, gym_location
+        SELECT id, user_id, name, start_time, end_time, privacy, gym_location, kind
         FROM workouts
         WHERE id = $1
         "#,

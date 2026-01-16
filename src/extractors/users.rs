@@ -1,11 +1,11 @@
-use crate::*;
+use crate::{structs::users::UserProfile, *};
 use axum::{
     extract::{FromRef, FromRequestParts},
     http::{header, request::Parts},
 };
 
 use jwt::VerifyWithKey;
-use sqlx::types::Uuid;
+use sqlx::{query, query_as, types::Uuid};
 use util::auth::JWTClaims;
 
 /// Remember, this is FromRequestParts, so it has to be ABOVE the extractors
@@ -37,6 +37,21 @@ where
 
         if claims.exp < chrono::Utc::now().timestamp() {
             return Err(AppError::Error(Errors::JWTExpired));
+        }
+
+        let user = query!(
+            r#"
+            SELECT id, username
+            FROM users
+            WHERE id = $1
+            "#,
+            claims.sub
+        )
+        .fetch_optional(&*state.db)
+        .await?;
+
+        if user.is_none() {
+            return Err(AppError::Error(Errors::Unauthorized));
         }
 
         Ok(UserId(claims.sub))

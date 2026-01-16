@@ -1,7 +1,7 @@
 use sqlx::query_as;
 
 use crate::extractors::users::UserId;
-use crate::structs::workouts::{CreateWorkoutBody, Workout};
+use crate::structs::workouts::{CreateWorkoutBody, Workout, WorkoutKind};
 use crate::*;
 
 /// Create a new workout
@@ -21,18 +21,20 @@ pub async fn create_workout(
     Json(body): Json<CreateWorkoutBody>,
 ) -> Result<Json<Workout>, AppError> {
     let privacy = body.privacy.unwrap_or_else(|| "friends".to_string());
+    let kind: String = body.kind.into();
 
     let workout = query_as!(
         Workout,
         r#"
-        INSERT INTO workouts (user_id, name, start_time, privacy, gym_location)
-        VALUES ($1, $2, NOW(), $3, $4)
-        RETURNING id, user_id, name, start_time, end_time, privacy, gym_location
+        INSERT INTO workouts (user_id, name, start_time, privacy, gym_location, kind)
+        VALUES ($1, $2, NOW(), $3, $4, $5)
+        RETURNING id, user_id, name, start_time, end_time, privacy, gym_location, kind
         "#,
         user_id,
         body.name,
         privacy,
-        body.gym_location
+        body.gym_location,
+        kind
     )
     .fetch_one(&*state.db)
     .await?;

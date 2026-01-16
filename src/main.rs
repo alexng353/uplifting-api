@@ -1,7 +1,9 @@
-use std::{net::Ipv4Addr, sync::Arc};
+use std::{net::Ipv4Addr, sync::Arc, time::Duration};
 use hmac::{Hmac, Mac};
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
+use tower_http::trace::TraceLayer;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 use utoipa_swagger_ui::SwaggerUi;
@@ -65,6 +67,16 @@ async fn index() -> &'static str {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
+    
+    // Initialize tracing
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "api=debug,tower_http=info".into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
     let port: u16 = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string()).parse()?;
     let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| "secret".to_string());
 
@@ -78,19 +90,36 @@ async fn main() -> anyhow::Result<()> {
         .allow_origin(["http://localhost:5173".parse().unwrap()])
         .allow_headers(Any);
 
+    let trace = TraceLayer::new_for_http()
+        .make_span_with(|request: &axum::http::Request<_>| {
+            tracing::info_span!(
+                "http_request",
+                method = %request.method(),
+                uri = %request.uri(),
+            )
+        })
+        .on_response(|response: &axum::http::Response<_>, latency: Duration, _span: &tracing::Span| {
+            tracing::info!(
+                status = %response.status(),
+                latency = ?latency,
+                "response"
+            );
+        });
+
     let (router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
         .routes(routes!(health_check))
         .routes(routes!(index))
         .with_state(state.clone())
         .nest("/api/v1", v1::router(state.clone()))
         .layer(cors)
+        .layer(trace)
         .split_for_parts();
 
     tokio::fs::write("openapi.json", api.to_pretty_json()?).await?;
 
     let router = router.merge(SwaggerUi::new("/docs").url("/docs/openapi.json", api));
 
-    println!("Listening on http://localhost:{port}");
+    tracing::info!("Listening on http://localhost:{port}");
     let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, port)).await?;
     axum::serve(listener, router).await?;
 
