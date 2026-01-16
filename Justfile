@@ -4,6 +4,7 @@ _default:
 
 migrate:
     sqlx migrate run
+    just prepare
 
 # Generate sqlx offline query data for building without a live database
 prepare:
