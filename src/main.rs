@@ -119,8 +119,8 @@ async fn main() -> anyhow::Result<()> {
 
     let router = router.merge(SwaggerUi::new("/docs").url("/docs/openapi.json", api));
 
-    tracing::info!("Listening on http://localhost:{port}");
-    let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, port)).await?;
+    tracing::info!("Listening on http://0.0.0.0:{port}");
+    let listener = TcpListener::bind((Ipv4Addr::UNSPECIFIED, port)).await?;
     axum::serve(listener, router).await?;
 
     Ok(())
