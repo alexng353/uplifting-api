@@ -21,7 +21,7 @@ pub async fn get_me(
     let user = query_as!(
         UserProfile,
         r#"
-        SELECT id, username, real_name, email, avatar_url, created_at
+        SELECT id, username, real_name, email, avatar_url, email_verified, created_at
         FROM users
         WHERE id = $1
         "#,

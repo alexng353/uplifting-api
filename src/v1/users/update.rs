@@ -25,12 +25,14 @@ pub async fn update_me(
         r#"
         UPDATE users
         SET 
-            real_name = COALESCE($2, real_name),
-            avatar_url = COALESCE($3, avatar_url)
+            username = COALESCE($2, username),
+            real_name = COALESCE($3, real_name),
+            avatar_url = COALESCE($4, avatar_url)
         WHERE id = $1
-        RETURNING id, username, real_name, email, avatar_url, created_at
+        RETURNING id, username, real_name, email, avatar_url, email_verified, created_at
         "#,
         user_id,
+        body.username,
         body.real_name,
         body.avatar_url
     )

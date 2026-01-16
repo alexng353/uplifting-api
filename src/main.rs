@@ -29,6 +29,51 @@ pub(crate) use serde::{Deserialize, Serialize};
 pub(crate) use state::AppState;
 pub(crate) use utoipa::ToSchema;
 
+use state::MailgunConfig;
+
+/// Validates that all required environment variables are set and returns their values
+fn validate_env() -> anyhow::Result<EnvConfig> {
+    let mut missing = Vec::new();
+
+    let mailgun_api_key = std::env::var("MAILGUN_API_KEY").ok();
+    let mailgun_domain = std::env::var("MAILGUN_DOMAIN").ok();
+    let mailgun_base_url = std::env::var("MAILGUN_BASE_URL").ok();
+    let mailgun_from_email = std::env::var("MAILGUN_FROM_EMAIL").ok();
+
+    if mailgun_api_key.is_none() {
+        missing.push("MAILGUN_API_KEY");
+    }
+    if mailgun_domain.is_none() {
+        missing.push("MAILGUN_DOMAIN");
+    }
+    if mailgun_base_url.is_none() {
+        missing.push("MAILGUN_BASE_URL");
+    }
+    if mailgun_from_email.is_none() {
+        missing.push("MAILGUN_FROM_EMAIL");
+    }
+
+    if !missing.is_empty() {
+        anyhow::bail!(
+            "Missing required environment variables: {}",
+            missing.join(", ")
+        );
+    }
+
+    Ok(EnvConfig {
+        mailgun: MailgunConfig {
+            api_key: mailgun_api_key.unwrap(),
+            domain: mailgun_domain.unwrap(),
+            base_url: mailgun_base_url.unwrap(),
+            from_email: mailgun_from_email.unwrap(),
+        },
+    })
+}
+
+struct EnvConfig {
+    mailgun: MailgunConfig,
+}
+
 #[derive(OpenApi)]
 #[openapi(
     tags(
@@ -80,6 +125,9 @@ async fn main() -> anyhow::Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    // Validate required environment variables
+    let env_config = validate_env()?;
+
     let port: u16 = std::env::var("PORT")
         .unwrap_or_else(|_| "8080".to_string())
         .parse()?;
@@ -91,6 +139,7 @@ async fn main() -> anyhow::Result<()> {
     let state = state::AppState {
         db: Arc::new(db),
         jwt_key: Hmac::new_from_slice(jwt_secret.as_bytes()).context("Failed to create HMAC")?,
+        mailgun: env_config.mailgun,
     };
 
     let cors = CorsLayer::new()

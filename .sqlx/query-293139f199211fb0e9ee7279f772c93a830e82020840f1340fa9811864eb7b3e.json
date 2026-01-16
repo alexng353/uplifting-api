@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        UPDATE users\n        SET \n            real_name = COALESCE($2, real_name),\n            avatar_url = COALESCE($3, avatar_url)\n        WHERE id = $1\n        RETURNING id, username, real_name, email, avatar_url, created_at\n        ",
+  "query": "\n        SELECT id, username, real_name, email, avatar_url, email_verified, created_at\n        FROM users\n        WHERE id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -30,15 +30,18 @@
       },
       {
         "ordinal": 5,
+        "name": "email_verified",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
         "name": "created_at",
         "type_info": "Timestamp"
       }
     ],
     "parameters": {
       "Left": [
-        "Uuid",
-        "Varchar",
-        "Text"
+        "Uuid"
       ]
     },
     "nullable": [
@@ -47,8 +50,9 @@
       false,
       false,
       true,
+      false,
       false
     ]
   },
-  "hash": "b84592499ff2addffb6529577c3eb2226a2d6ab27b5f6fa378b92d39ffa05c9f"
+  "hash": "293139f199211fb0e9ee7279f772c93a830e82020840f1340fa9811864eb7b3e"
 }
