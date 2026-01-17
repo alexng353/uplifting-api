@@ -11,6 +11,10 @@ pub struct UserSettings {
     pub default_rest_timer_seconds: i32,
     pub default_privacy: String,
     pub share_gym_location: bool,
+    // Sharing settings
+    pub share_online_status: bool,
+    pub share_workout_status: bool,
+    pub share_workout_history: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -20,6 +24,10 @@ pub struct UpdateSettingsBody {
     pub default_rest_timer_seconds: Option<i32>,
     pub default_privacy: Option<String>,
     pub share_gym_location: Option<bool>,
+    // Sharing settings
+    pub share_online_status: Option<bool>,
+    pub share_workout_status: Option<bool>,
+    pub share_workout_history: Option<bool>,
 }
 
 impl Default for UserSettings {
@@ -31,6 +39,9 @@ impl Default for UserSettings {
             default_rest_timer_seconds: 90,
             default_privacy: "friends".to_string(),
             share_gym_location: true,
+            share_online_status: true,
+            share_workout_status: true,
+            share_workout_history: true,
         }
     }
 }

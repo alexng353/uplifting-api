@@ -12,12 +12,19 @@ pub enum Errors {
     Ise(anyhow::Error),
     Unimplemented,
     Unauthorized,
+    Forbidden(String),
     JWTExpired,
 }
 
 pub enum AppError {
     AnyhowError(AnyhowError),
     Error(Errors),
+}
+
+impl AppError {
+    pub fn forbidden(message: impl Into<String>) -> Self {
+        AppError::Error(Errors::Forbidden(message.into()))
+    }
 }
 
 impl From<anyhow::Error> for AppError {
@@ -73,6 +80,8 @@ impl IntoResponse for AppError {
                 }
 
                 Errors::Unauthorized => (StatusCode::UNAUTHORIZED, "Unauthorized").into_response(),
+
+                Errors::Forbidden(msg) => (StatusCode::FORBIDDEN, msg).into_response(),
 
                 Errors::Unimplemented => {
                     (StatusCode::NOT_IMPLEMENTED, "Not implemented").into_response()

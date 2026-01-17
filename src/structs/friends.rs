@@ -55,6 +55,38 @@ pub struct FriendWithProfile {
     pub created_at: NaiveDateTime,
 }
 
+/// Friend with activity status (online, in workout)
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct FriendWithStatus {
+    pub friendship_id: Uuid,
+    pub user_id: Uuid,
+    pub username: String,
+    pub real_name: String,
+    pub avatar_url: Option<String>,
+    pub status: String,
+    pub created_at: NaiveDateTime,
+    // Activity status (null if sharing is disabled)
+    pub is_online: Option<bool>,
+    pub is_in_workout: Option<bool>,
+    pub current_workout_name: Option<String>,
+    pub current_workout_started_at: Option<NaiveDateTime>,
+}
+
+/// User activity tracking
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct UserActivity {
+    pub user_id: Uuid,
+    pub last_seen_at: NaiveDateTime,
+    pub current_workout_id: Option<Uuid>,
+    pub current_workout_started_at: Option<NaiveDateTime>,
+}
+
+/// Request body for updating activity (heartbeat)
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct UpdateActivityBody {
+    pub current_workout_id: Option<Uuid>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct SendFriendRequestBody {
     pub friend_id: Uuid,
