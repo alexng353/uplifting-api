@@ -33,6 +33,8 @@ pub struct SyncSet {
     pub weight: Decimal,
     pub weight_unit: String,
     pub created_at: JSDate,
+    /// Side for unilateral exercises: "L" or "R"
+    pub side: Option<String>,
 }
 
 /// Response after syncing a workout

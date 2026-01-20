@@ -47,8 +47,8 @@ pub async fn sync_workout(
         for set in &exercise.sets {
             sqlx::query!(
                 r#"
-                INSERT INTO user_sets (user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, created_at)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                INSERT INTO user_sets (user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, created_at, side)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                 "#,
                 user_id,
                 exercise.exercise_id,
@@ -57,7 +57,8 @@ pub async fn sync_workout(
                 set.reps,
                 set.weight,
                 set.weight_unit,
-                *set.created_at
+                *set.created_at,
+                set.side
             )
             .execute(&mut *tx)
             .await?;
@@ -72,7 +73,7 @@ pub async fn sync_workout(
         let sets = query_as!(
             PreviousSet,
             r#"
-            SELECT reps, weight, weight_unit
+            SELECT reps, weight, weight_unit, side
             FROM user_sets
             WHERE user_id = $1 AND exercise_id = $2 AND workout_id = $3
             ORDER BY created_at ASC

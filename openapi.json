@@ -1468,6 +1468,10 @@
 						"type": "integer",
 						"format": "int32"
 					},
+					"side": {
+						"type": ["string", "null"],
+						"description": "Side for unilateral exercises: \"L\" or \"R\""
+					},
 					"weight": {
 						"type": "string"
 					},
@@ -1888,6 +1892,10 @@
 						"type": "integer",
 						"format": "int32"
 					},
+					"side": {
+						"type": ["string", "null"],
+						"description": "Side for unilateral exercises: \"L\" or \"R\""
+					},
 					"weight": {
 						"type": "string"
 					},
@@ -1984,6 +1992,10 @@
 					"reps": {
 						"type": "integer",
 						"format": "int32"
+					},
+					"side": {
+						"type": ["string", "null"],
+						"description": "Side for unilateral exercises: \"L\" or \"R\""
 					},
 					"weight": {
 						"type": "string"
@@ -2217,6 +2229,10 @@
 					"reps": {
 						"type": "integer",
 						"format": "int32"
+					},
+					"side": {
+						"type": ["string", "null"],
+						"description": "Side for unilateral exercises: \"L\" or \"R\""
 					},
 					"user_id": {
 						"type": "string",

@@ -52,7 +52,7 @@ pub async fn get_workout(
     let sets = query_as!(
         UserSet,
         r#"
-        SELECT id, user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, created_at
+        SELECT id, user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, created_at, side
         FROM user_sets
         WHERE workout_id = $1
         ORDER BY created_at ASC

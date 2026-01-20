@@ -16,6 +16,8 @@ pub struct UserSet {
     pub weight: Decimal,
     pub weight_unit: String,
     pub created_at: NaiveDateTime,
+    /// Side for unilateral exercises: "L" or "R"
+    pub side: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -25,6 +27,8 @@ pub struct CreateSetBody {
     pub reps: i32,
     pub weight: Decimal,
     pub weight_unit: String,
+    /// Side for unilateral exercises: "L" or "R"
+    pub side: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -47,4 +51,6 @@ pub struct PreviousSet {
     pub reps: i32,
     pub weight: Decimal,
     pub weight_unit: String,
+    /// Side for unilateral exercises: "L" or "R"
+    pub side: Option<String>,
 }

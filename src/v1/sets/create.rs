@@ -41,9 +41,9 @@ pub async fn create_set(
     let set = query_as!(
         UserSet,
         r#"
-        INSERT INTO user_sets (user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING id, user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, created_at
+        INSERT INTO user_sets (user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, side)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id, user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, created_at, side
         "#,
         user_id,
         body.exercise_id,
@@ -51,7 +51,8 @@ pub async fn create_set(
         body.profile_id,
         body.reps,
         body.weight,
-        body.weight_unit
+        body.weight_unit,
+        body.side
     )
     .fetch_one(&*state.db)
     .await?;

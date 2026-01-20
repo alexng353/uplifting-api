@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT reps, weight, weight_unit\n            FROM user_sets\n            WHERE user_id = $1 AND exercise_id = $2 AND workout_id = $3\n            ORDER BY created_at ASC\n            ",
+  "query": "\n            SELECT reps, weight, weight_unit, side\n            FROM user_sets\n            WHERE user_id = $1 AND exercise_id = $2 AND workout_id = $3\n            ORDER BY created_at ASC\n            ",
   "describe": {
     "columns": [
       {
@@ -17,6 +17,11 @@
         "ordinal": 2,
         "name": "weight_unit",
         "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "side",
+        "type_info": "Varchar"
       }
     ],
     "parameters": {
@@ -29,8 +34,9 @@
     "nullable": [
       false,
       false,
-      false
+      false,
+      true
     ]
   },
-  "hash": "3a1b7dda4878e454f63e3fb91bb1a05a6a9bbab6a38f3743dc623c709f96d97b"
+  "hash": "b8f1803f3a18b7500c2cbac856e111e6274f7e0964eda11e14438e53a42d28ae"
 }

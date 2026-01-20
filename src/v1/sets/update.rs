@@ -47,7 +47,7 @@ pub async fn update_set(
             weight = COALESCE($3, weight),
             weight_unit = COALESCE($4, weight_unit)
         WHERE id = $1
-        RETURNING id, user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, created_at
+        RETURNING id, user_id, exercise_id, workout_id, profile_id, reps, weight, weight_unit, created_at, side
         "#,
         set_id,
         body.reps,
