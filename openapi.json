@@ -512,7 +512,7 @@
 		"/api/v1/friends": {
 			"get": {
 				"tags": ["friends"],
-				"summary": "List accepted friends",
+				"summary": "List accepted friends with activity status",
 				"operationId": "list_friends",
 				"responses": {
 					"200": {
@@ -522,7 +522,7 @@
 								"schema": {
 									"type": "array",
 									"items": {
-										"$ref": "#/components/schemas/FriendWithProfile"
+										"$ref": "#/components/schemas/FriendWithStatus"
 									}
 								}
 							}
@@ -560,6 +560,32 @@
 					},
 					"400": {
 						"description": "Cannot send request to self or already exists"
+					},
+					"401": {
+						"description": "Not authenticated"
+					}
+				}
+			}
+		},
+		"/api/v1/friends/activity": {
+			"post": {
+				"tags": ["friends"],
+				"summary": "Update user activity (heartbeat)",
+				"description": "Call this periodically to update online status and current workout.\nShould be called every ~60 seconds when app is open.",
+				"operationId": "update_activity",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateActivityBody"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Activity updated"
 					},
 					"401": {
 						"description": "Not authenticated"
@@ -635,6 +661,62 @@
 					},
 					"401": {
 						"description": "Not authenticated"
+					}
+				}
+			}
+		},
+		"/api/v1/friends/{friend_id}/workouts": {
+			"get": {
+				"tags": ["friends"],
+				"summary": "Get a friend's workout history",
+				"description": "Returns the friend's workouts if they have sharing enabled and you are friends.",
+				"operationId": "get_friend_workouts",
+				"parameters": [
+					{
+						"name": "friend_id",
+						"in": "path",
+						"description": "Friend's user ID",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"format": "uuid"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FriendWorkoutsResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Not authenticated"
+					},
+					"403": {
+						"description": "Not friends or sharing disabled"
 					}
 				}
 			}
@@ -1631,6 +1713,90 @@
 					}
 				}
 			},
+			"FriendWithStatus": {
+				"type": "object",
+				"description": "Friend with activity status (online, in workout)",
+				"required": [
+					"friendship_id",
+					"user_id",
+					"username",
+					"real_name",
+					"status",
+					"created_at"
+				],
+				"properties": {
+					"avatar_url": {
+						"type": ["string", "null"]
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"current_workout_name": {
+						"type": ["string", "null"]
+					},
+					"current_workout_started_at": {
+						"type": ["string", "null"],
+						"format": "date-time"
+					},
+					"friendship_id": {
+						"type": "string",
+						"format": "uuid"
+					},
+					"is_in_workout": {
+						"type": ["boolean", "null"]
+					},
+					"is_online": {
+						"type": ["boolean", "null"]
+					},
+					"real_name": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"user_id": {
+						"type": "string",
+						"format": "uuid"
+					},
+					"username": {
+						"type": "string"
+					}
+				}
+			},
+			"FriendWorkoutsResponse": {
+				"type": "object",
+				"description": "Response for friend workouts including week summary",
+				"required": [
+					"workouts",
+					"this_week_count",
+					"this_week_volume",
+					"this_week_duration_minutes",
+					"can_view"
+				],
+				"properties": {
+					"can_view": {
+						"type": "boolean"
+					},
+					"this_week_count": {
+						"type": "integer",
+						"format": "int64"
+					},
+					"this_week_duration_minutes": {
+						"type": "integer",
+						"format": "int64"
+					},
+					"this_week_volume": {
+						"type": "string"
+					},
+					"workouts": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/WorkoutSummary"
+						}
+					}
+				}
+			},
 			"Friendship": {
 				"type": "object",
 				"required": ["id", "user_id", "friend_id", "status", "created_at"],
@@ -1876,6 +2042,16 @@
 					}
 				}
 			},
+			"UpdateActivityBody": {
+				"type": "object",
+				"description": "Request body for updating activity (heartbeat)",
+				"properties": {
+					"current_workout_id": {
+						"type": ["string", "null"],
+						"format": "uuid"
+					}
+				}
+			},
 			"UpdateProfileBody": {
 				"type": "object",
 				"properties": {
@@ -1923,6 +2099,15 @@
 						"format": "int32"
 					},
 					"share_gym_location": {
+						"type": ["boolean", "null"]
+					},
+					"share_online_status": {
+						"type": ["boolean", "null"]
+					},
+					"share_workout_history": {
+						"type": ["boolean", "null"]
+					},
+					"share_workout_status": {
 						"type": ["boolean", "null"]
 					}
 				}
@@ -2056,7 +2241,10 @@
 					"max_workout_duration_minutes",
 					"default_rest_timer_seconds",
 					"default_privacy",
-					"share_gym_location"
+					"share_gym_location",
+					"share_online_status",
+					"share_workout_status",
+					"share_workout_history"
 				],
 				"properties": {
 					"default_privacy": {
@@ -2074,6 +2262,15 @@
 						"format": "int32"
 					},
 					"share_gym_location": {
+						"type": "boolean"
+					},
+					"share_online_status": {
+						"type": "boolean"
+					},
+					"share_workout_history": {
+						"type": "boolean"
+					},
+					"share_workout_status": {
 						"type": "boolean"
 					},
 					"user_id": {
