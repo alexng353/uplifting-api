@@ -7,6 +7,7 @@ pub mod favourite;
 pub mod get;
 pub mod list;
 pub mod profiles;
+pub mod types;
 
 pub const EXERCISES_TAG: &str = "exercises";
 
@@ -15,6 +16,7 @@ pub(super) fn router(state: AppState) -> OpenApiRouter {
         .routes(routes!(list::list_exercises))
         .routes(routes!(create::create))
         .routes(routes!(get::get_exercise))
+        .routes(routes!(types::list_types))
         .routes(routes!(profiles::get_all_profiles))
         .routes(routes!(profiles::get_profiles))
         .routes(routes!(profiles::create_profile))

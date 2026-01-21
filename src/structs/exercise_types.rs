@@ -17,6 +17,23 @@ pub enum ExerciseType {
     PlateLoadedMachine,
 }
 
+impl ExerciseType {
+    pub fn all() -> Vec<Self> {
+        vec![
+            Self::Dumbbell,
+            Self::Barbell,
+            Self::Bodyweight,
+            Self::Machine,
+            Self::Kettlebell,
+            Self::ResistanceBand,
+            Self::Cable,
+            Self::MedicineBall,
+            Self::Plyometric,
+            Self::PlateLoadedMachine,
+        ]
+    }
+}
+
 impl std::fmt::Display for ExerciseType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
