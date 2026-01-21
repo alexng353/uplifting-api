@@ -20,8 +20,7 @@ pub async fn update_me(
     UserId(user_id): UserId,
     Json(body): Json<UpdateProfileBody>,
 ) -> Result<Json<UserProfile>, AppError> {
-    let user = query_as!(
-        UserProfile,
+    let user = query_as::<_, UserProfile>(
         r#"
         UPDATE users
         SET 
@@ -29,13 +28,13 @@ pub async fn update_me(
             real_name = COALESCE($3, real_name),
             avatar_url = COALESCE($4, avatar_url)
         WHERE id = $1
-        RETURNING id, username, real_name, email, avatar_url, email_verified, created_at
+        RETURNING id, username, real_name, email, avatar_url, email_verified, is_admin, created_at
         "#,
-        user_id,
-        body.username,
-        body.real_name,
-        body.avatar_url
     )
+    .bind(user_id)
+    .bind(body.username)
+    .bind(body.real_name)
+    .bind(body.avatar_url)
     .fetch_one(&*state.db)
     .await?;
 

@@ -18,15 +18,14 @@ pub async fn get_me(
     State(state): State<AppState>,
     UserId(user_id): UserId,
 ) -> Result<Json<UserProfile>, AppError> {
-    let user = query_as!(
-        UserProfile,
+    let user = query_as::<_, UserProfile>(
         r#"
-        SELECT id, username, real_name, email, avatar_url, email_verified, created_at
+        SELECT id, username, real_name, email, avatar_url, email_verified, is_admin, created_at
         FROM users
         WHERE id = $1
         "#,
-        user_id
     )
+    .bind(user_id)
     .fetch_one(&*state.db)
     .await?;
 

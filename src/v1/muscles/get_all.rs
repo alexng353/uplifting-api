@@ -12,7 +12,12 @@ pub struct Muscle {
     minor_group: String,
 }
 
-#[utoipa::path(get, path = "/all", responses((status = OK, body = Muscle)), tag = super::MUSCLES_TAG)]
+#[utoipa::path(
+    get,
+    path = "/all",
+    responses((status = OK, body = Vec<Muscle>)),
+    tag = super::MUSCLES_TAG
+)]
 pub async fn get_all(State(state): State<AppState>) -> Result<Json<Vec<Muscle>>, AppError> {
     let muscles = query_as!(Muscle, "SELECT * FROM muscles")
         .fetch_all(&*state.db)

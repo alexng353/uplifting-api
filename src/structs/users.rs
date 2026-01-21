@@ -12,6 +12,7 @@ pub struct UserProfile {
     pub email: String,
     pub avatar_url: Option<String>,
     pub email_verified: bool,
+    pub is_admin: bool,
     pub created_at: NaiveDateTime,
 }
 

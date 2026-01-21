@@ -34,7 +34,15 @@ pub struct Muscle {
     pub is_primary: bool,
 }
 
-#[utoipa::path(post, path = "/create", responses((status = OK, body = String)), tag = super::EXERCISES_TAG)]
+#[utoipa::path(
+    post,
+    path = "/create",
+    responses(
+        (status = OK, body = String),
+        (status = UNAUTHORIZED, description = "Not authenticated")
+    ),
+    tag = super::EXERCISES_TAG
+)]
 pub async fn create(
     State(state): State<AppState>,
     UserId(user): UserId,
@@ -44,6 +52,10 @@ pub async fn create(
         .fetch_one(&*state.db)
         .await?
         .is_admin;
+
+    if !is_admin {
+        return Err(AppError::Error(Errors::Unauthorized));
+    }
 
     let muscles: Vec<Muscle> = body
         .primary_muscles
