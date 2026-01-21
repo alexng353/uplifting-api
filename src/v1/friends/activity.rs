@@ -24,17 +24,18 @@ pub async fn update_activity(
     Json(body): Json<UpdateActivityBody>,
 ) -> Result<(), AppError> {
     // Get the workout start time if a workout_id is provided
-    let workout_started_at: Option<chrono::NaiveDateTime> = if let Some(workout_id) = body.current_workout_id {
-        sqlx::query_scalar!(
-            r#"SELECT start_time FROM workouts WHERE id = $1 AND user_id = $2"#,
-            workout_id,
-            user_id
-        )
-        .fetch_optional(&*state.db)
-        .await?
-    } else {
-        None
-    };
+    let workout_started_at: Option<chrono::NaiveDateTime> =
+        if let Some(workout_id) = body.current_workout_id {
+            sqlx::query_scalar!(
+                r#"SELECT start_time FROM workouts WHERE id = $1 AND user_id = $2"#,
+                workout_id,
+                user_id
+            )
+            .fetch_optional(&*state.db)
+            .await?
+        } else {
+            None
+        };
 
     query!(
         r#"

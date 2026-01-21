@@ -3,8 +3,8 @@ use crate::AppState;
 pub(super) use super::*;
 
 pub mod create;
-pub mod groups;
 pub mod get_all;
+pub mod groups;
 
 pub const MUSCLES_TAG: &str = "muscles";
 
