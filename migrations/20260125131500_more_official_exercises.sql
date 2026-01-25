@@ -1874,6 +1874,12 @@ ON CONFLICT DO NOTHING;
 INSERT INTO exercise_muscle_relations (exercise_id, muscle_id, is_primary)
 SELECT e.id, m.id, false
 FROM exercises e, muscles m
+WHERE e.name = 'Smith Machine Calf Raise' AND m.name = 'soleus'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO exercise_muscle_relations (exercise_id, muscle_id, is_primary)
+SELECT e.id, m.id, false
+FROM exercises e, muscles m
 WHERE e.name = 'Landmine Rotation' AND m.name = 'rectus abdominis'
 ON CONFLICT DO NOTHING;
 
