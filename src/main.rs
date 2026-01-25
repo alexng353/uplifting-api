@@ -10,8 +10,9 @@ use utoipa_swagger_ui::SwaggerUi;
 
 // tags
 use v1::{
-    auth::AUTH_TAG, exercises::EXERCISES_TAG, friends::FRIENDS_TAG, muscles::MUSCLES_TAG,
-    sets::SETS_TAG, sync::SYNC_TAG, users::USERS_TAG, workouts::WORKOUTS_TAG,
+    auth::AUTH_TAG, body_weights::BODY_WEIGHTS_TAG, exercises::EXERCISES_TAG,
+    friends::FRIENDS_TAG, muscles::MUSCLES_TAG, sets::SETS_TAG, sync::SYNC_TAG,
+    users::USERS_TAG, workouts::WORKOUTS_TAG,
 };
 
 mod db;
@@ -78,6 +79,7 @@ struct EnvConfig {
 #[openapi(
     tags(
         (name = AUTH_TAG, description = "Authentication API endpoints"),
+        (name = BODY_WEIGHTS_TAG, description = "Body weight API endpoints"),
         (name = EXERCISES_TAG, description = "Exercise API endpoints"),
         (name = FRIENDS_TAG, description = "Friends API endpoints"),
         (name = MUSCLES_TAG, description = "Muscle API endpoints"),

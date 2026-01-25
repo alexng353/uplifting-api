@@ -1,5 +1,6 @@
 pub mod exercise_types;
 pub mod exercises;
+pub mod body_weights;
 pub mod friends;
 pub mod profiles;
 pub mod serde_utils;
