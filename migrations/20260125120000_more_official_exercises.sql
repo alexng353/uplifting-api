@@ -169,6 +169,12 @@ ON CONFLICT DO NOTHING;
 INSERT INTO exercise_muscle_relations (exercise_id, muscle_id, is_primary)
 SELECT e.id, m.id, false
 FROM exercises e, muscles m
+WHERE e.name = 'Plate Loaded Flat Press' AND m.name = 'triceps brachii, medial head'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO exercise_muscle_relations (exercise_id, muscle_id, is_primary)
+SELECT e.id, m.id, false
+FROM exercises e, muscles m
 WHERE e.name = 'Plate Loaded Incline Press' AND m.name = 'triceps brachii, lateral head'
 ON CONFLICT DO NOTHING;
 
