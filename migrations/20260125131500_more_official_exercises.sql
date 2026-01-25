@@ -5,7 +5,7 @@ BEGIN;
 INSERT INTO exercises (name, exercise_type, official, description, movement_pattern, muscle_group)
 VALUES
     ('Floor Press', 'barbell', true, 'Targets: pectoralis major', 'horizontal_push', 'chest'),
-    ('Svend Press', 'plate_loaded_machine', true, 'Targets: pectoralis major', 'isolation', 'chest'),
+    ('Svend Press', 'dumbbell', true, 'Targets: pectoralis major', 'isolation', 'chest'),
     ('Cable Chest Press', 'cable', true, 'Targets: pectoralis major', 'horizontal_push', 'chest'),
     ('Snatch-Grip Deadlift', 'barbell', true, 'Targets: erector spinae, gluteus maximus, hamstrings, biceps femoris long head', 'hip_hinge', 'back'),
     ('Block Pull', 'barbell', true, 'Targets: erector spinae, gluteus maximus, hamstrings, biceps femoris long head', 'hip_hinge', 'back'),
@@ -70,7 +70,7 @@ VALUES
     ('Side-Lying External Rotation', 'dumbbell', true, 'Targets: infraspinatus, teres minor', 'isolation', 'rotator_cuff'),
     ('YTWL Raises', 'dumbbell', true, 'Targets: trapezius, lower, trapezius, middle, posterior deltoid', 'isolation', 'back'),
     ('Scaption', 'dumbbell', true, 'Targets: supraspinatus, anterior deltoid', 'isolation', 'rotator_cuff'),
-    ('Plate Pinch', 'plate_loaded_machine', true, 'Targets: flexor carpi radialis, flexor carpi ulnaris', 'isolation', 'forearms'),
+    ('Plate Pinch', 'dumbbell', true, 'Targets: flexor carpi radialis, flexor carpi ulnaris', 'isolation', 'forearms'),
     ('Finger Curl', 'barbell', true, 'Targets: flexor carpi radialis, flexor carpi ulnaris', 'isolation', 'forearms'),
     ('Behind-the-Back Wrist Curl', 'barbell', true, 'Targets: flexor carpi radialis, flexor carpi ulnaris', 'isolation', 'forearms')
 ON CONFLICT DO NOTHING;
